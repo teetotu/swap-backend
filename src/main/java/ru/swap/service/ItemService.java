@@ -2,9 +2,12 @@ package ru.swap.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.swap.dto.ItemRequest;
 import ru.swap.dto.ItemResponse;
 import ru.swap.exceptions.ItemNotFoundException;
@@ -18,6 +21,7 @@ import ru.swap.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -82,24 +86,39 @@ public class ItemService {
     }
 
     public void updateItem(ItemRequest itemRequest) {
-        itemRepository.findById(itemRequest.getItemId())
-                .map(item -> {
-                    if(itemRequest.getImage() != null) {
-                        try {
-                            item.setImage(itemRequest.getImage().getBytes());
-                        } catch (IOException e) {
-                            log.error(e.getMessage());
-                            return itemRepository.save(item);
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Item item = itemRepository.findById(itemRequest.getItemId()).orElseThrow(() -> new SwapApplicationException("Item not found"));;
+        if (Objects.equals(item.getUser().getUsername(), principal.getSubject())
+                && authService.isSessionActive(principal.getSubject())) {
+            itemRepository.findById(itemRequest.getItemId())
+                    .map(it -> {
+                        if (itemRequest.getImage() != null) {
+                            try {
+                                it.setImage(itemRequest.getImage().getBytes());
+                            } catch (IOException e) {
+                                log.error(e.getMessage());
+                                return itemRepository.save(it);
+                            }
                         }
-                    }
-                    if(itemRequest.getItemName() != null) item.setItemName(itemRequest.getItemName());
-                    if(itemRequest.getSection() != null) item.setSection(Section.findByKey(itemRequest.getSection()));
-                    if(itemRequest.getDescription() != null) item.setDescription(itemRequest.getDescription());
-                    return itemRepository.save(item);
-                });
+                        if (itemRequest.getItemName() != null) it.setItemName(itemRequest.getItemName());
+                        if (itemRequest.getSection() != null)
+                            it.setSection(Section.findByKey(itemRequest.getSection()));
+                        if (itemRequest.getDescription() != null) it.setDescription(itemRequest.getDescription());
+                        return itemRepository.save(it);
+                    });
+        } else {
+            throw new SwapApplicationException("Unauthorized access");
+        }
     }
 
     public void deleteItemById(Long id) {
-        itemRepository.deleteById(id);
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Item item = itemRepository.findById(id).orElseThrow(() -> new SwapApplicationException("Item not found"));;
+        if (Objects.equals(item.getUser().getUsername(), principal.getSubject())
+                && authService.isSessionActive(principal.getSubject())) {
+            itemRepository.deleteById(id);
+        } else {
+            throw new SwapApplicationException("Unauthorized access");
+        }
     }
 }

@@ -64,13 +64,21 @@ public class ItemController {
 
     @PutMapping("/update")
     public ResponseEntity<String> updateItem(@ModelAttribute ItemRequest itemRequest) {
-        itemService.updateItem(itemRequest);
-        return status(HttpStatus.NO_CONTENT).body("updated successfully");
+        try {
+            itemService.updateItem(itemRequest);
+            return status(HttpStatus.NO_CONTENT).body("updated successfully");
+        } catch (SwapApplicationException e) {
+            return status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable("id") Long id) {
-        itemService.deleteItemById(id);
-        return status(HttpStatus.OK).body("Deleted successfully");
+        try {
+            itemService.deleteItemById(id);
+            return status(HttpStatus.OK).body("Deleted successfully");
+        } catch (SwapApplicationException e) {
+            return status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+        }
     }
 }
