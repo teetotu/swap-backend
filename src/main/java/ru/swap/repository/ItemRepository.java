@@ -15,6 +15,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByUser(User user);
 
-    @Query(value = "select * from item where match(item_index) against(:keywords in natural language mode)", nativeQuery = true)
+    @Query(value = "select * from item where match(item__index) against(:keywords in natural language mode)", nativeQuery = true)
     List<Item> search(@Param("keywords") String keywords);
 }

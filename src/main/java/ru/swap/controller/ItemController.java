@@ -1,5 +1,6 @@
 package ru.swap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import ru.swap.SwapApplication;
 import ru.swap.dto.ItemRequest;
@@ -19,6 +20,7 @@ import static org.springframework.http.ResponseEntity.status;
 @RestController
 @RequestMapping("/api/items/")
 @AllArgsConstructor
+@Slf4j
 public class ItemController {
 
     private final ItemService itemService;
@@ -58,5 +60,12 @@ public class ItemController {
     @GetMapping("by-title/{keywords}")
     public ResponseEntity<List<ItemResponse>> getItemsByKeywords(@PathVariable("keywords") String keywords) {
         return status(HttpStatus.OK).body(itemService.getItemsByKeywords(keywords));
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateItem(@ModelAttribute ItemRequest itemRequest) {
+        log.info("DEBUG " + itemRequest.getItemId());
+        itemService.updateItem(itemRequest);
+        return status(HttpStatus.NO_CONTENT).body("updated successfully");
     }
 }

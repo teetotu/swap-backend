@@ -80,4 +80,15 @@ public class ItemService {
                 .map(itemMapper::mapToDto)
                 .collect(toList());
     }
+
+    public void updateItem(ItemRequest itemRequest) {
+        itemRepository.findById(itemRequest.getItemId())
+                .map(item -> {
+                    item.setItemName(itemRequest.getItemName());
+                    item.setItemName(itemRequest.getItemName());
+                    item.setItemName(itemRequest.getItemName());
+                    item.setItemName(itemRequest.getItemName());
+                    return itemRepository.save(item);
+                });
+    }
 }
