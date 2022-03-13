@@ -62,10 +62,16 @@ public class ItemController {
         return status(HttpStatus.OK).body(itemService.getItemsByKeywords(keywords));
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<String> updateItem(@ModelAttribute ItemRequest itemRequest) {
         log.info("DEBUG " + itemRequest.getItemId());
         itemService.updateItem(itemRequest);
         return status(HttpStatus.NO_CONTENT).body("updated successfully");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteItem(@PathVariable("id") Long id) {
+        itemService.deleteItemById(id);
+        return status(HttpStatus.OK).body("Deleted successfully");
     }
 }

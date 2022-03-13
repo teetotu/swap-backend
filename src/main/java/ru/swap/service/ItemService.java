@@ -58,7 +58,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public List<ItemResponse> getItemsBySection(String section) {
-        List<Item> items = itemRepository.findAllBySection(section);
+        List<Item> items = itemRepository.findAllBySection(Section.findByKey(section));
         return items.stream().map(itemMapper::mapToDto).collect(toList());
     }
 
@@ -90,5 +90,9 @@ public class ItemService {
                     item.setItemName(itemRequest.getItemName());
                     return itemRepository.save(item);
                 });
+    }
+
+    public void deleteItemById(Long id) {
+        itemRepository.deleteById(id);
     }
 }
