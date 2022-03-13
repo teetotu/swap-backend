@@ -32,4 +32,6 @@ public class Item {
     private Section section;
     @Column(name = "image", columnDefinition="LONGBLOB")
     public byte[] image;
+    @Lob
+    public String city;
 }

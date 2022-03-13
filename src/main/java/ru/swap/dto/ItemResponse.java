@@ -14,4 +14,5 @@ public class ItemResponse {
     private String username;
     private String section;
     private String base64Image;
+    private String city;
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.swap.dto.AuthenticationResponse;
 import ru.swap.dto.LoginRequest;
 import ru.swap.dto.RegisterRequest;
+import ru.swap.dto.UpdateContactInfoRequest;
 import ru.swap.exceptions.SwapApplicationException;
 import ru.swap.model.NotificationEmail;
 import ru.swap.model.User;
@@ -22,10 +23,7 @@ import ru.swap.repository.UserRepository;
 import ru.swap.repository.VerificationTokenRepository;
 import ru.swap.security.JwtProvider;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +45,9 @@ public class AuthService {
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setContactInfo(registerRequest.getContactInfo());
+        user.setLastName(registerRequest.getLastName());
+        user.setFirstName(registerRequest.getFirstName());
+        user.setCity(registerRequest.getCity());
 
         user.setEnabled(false);
 
@@ -124,5 +125,17 @@ public class AuthService {
         String username = ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getSubject();
         if (!isSessionActive(username)) deactivateSession(username);
         else throw new SwapApplicationException("User not logged in");
+    }
+
+    public void update(UpdateContactInfoRequest request) {
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userRepository
+                .findByUsername(principal.getSubject())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found - " + principal.getSubject()));
+        if (isSessionActive(currentUser.getUsername())) {
+            if (request.getCity() != null) currentUser.setCity(request.getCity());
+            if (request.getContactInfo() != null) currentUser.setContactInfo(request.getContactInfo());
+            userRepository.save(currentUser);
+        }
     }
 }

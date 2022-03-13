@@ -20,12 +20,14 @@ public abstract class ItemMapper {
     @Mapping(target = "user", source = "user")
     @Mapping(target = "section", ignore = true)
     @Mapping(target = "image", ignore = true)
+    @Mapping(target = "city", source = "user.city")
     public abstract Item map(ItemRequest itemRequest, User user);
 
     @Mapping(target = "id", source = "item.itemId")
     @Mapping(target = "itemName", source = "item.itemName")
     @Mapping(target = "username", source = "user.username")
     @Mapping(target = "description", source = "item.description")
+    @Mapping(target = "city", source = "item.city")
     @Mapping(target = "base64Image", expression = "java(convertBytesToBase64(item.image))")
     public abstract ItemResponse mapToDto(Item item);
 

@@ -29,6 +29,12 @@ public class User {
     @Email
     @NotEmpty(message = "Email is required")
     private String email;
+    @NotEmpty(message = "Last name is required")
+    private String lastName;
+    @NotEmpty(message = "First name is required")
+    private String firstName;
+    @NotEmpty(message = "City name is required")
+    private String city;
     private boolean enabled;
     @NotBlank(message = "Contact info is required")
     private String contactInfo;

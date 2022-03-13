@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.swap.dto.AuthenticationResponse;
 import ru.swap.dto.LoginRequest;
 import ru.swap.dto.RegisterRequest;
+import ru.swap.dto.UpdateContactInfoRequest;
 import ru.swap.exceptions.SwapApplicationException;
 import ru.swap.service.AuthService;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -44,5 +44,11 @@ public class AuthController {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
         return ResponseEntity.status(OK).body("Refresh Token Deleted Successfully");
+    }
+
+    @PutMapping
+    public ResponseEntity<String> update(@RequestBody UpdateContactInfoRequest request) {
+        authService.update(request);
+        return ResponseEntity.status(NO_CONTENT).body("updated user info");
     }
 }
