@@ -64,7 +64,6 @@ public class ItemController {
 
     @PutMapping("/update")
     public ResponseEntity<String> updateItem(@ModelAttribute ItemRequest itemRequest) {
-        log.info("DEBUG " + itemRequest.getItemId());
         itemService.updateItem(itemRequest);
         return status(HttpStatus.NO_CONTENT).body("updated successfully");
     }

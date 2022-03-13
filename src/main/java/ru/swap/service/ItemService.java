@@ -84,10 +84,17 @@ public class ItemService {
     public void updateItem(ItemRequest itemRequest) {
         itemRepository.findById(itemRequest.getItemId())
                 .map(item -> {
-                    item.setItemName(itemRequest.getItemName());
-                    item.setItemName(itemRequest.getItemName());
-                    item.setItemName(itemRequest.getItemName());
-                    item.setItemName(itemRequest.getItemName());
+                    if(itemRequest.getImage() != null) {
+                        try {
+                            item.setImage(itemRequest.getImage().getBytes());
+                        } catch (IOException e) {
+                            log.error(e.getMessage());
+                            return itemRepository.save(item);
+                        }
+                    }
+                    if(itemRequest.getItemName() != null) item.setItemName(itemRequest.getItemName());
+                    if(itemRequest.getSection() != null) item.setSection(Section.findByKey(itemRequest.getSection()));
+                    if(itemRequest.getDescription() != null) item.setDescription(itemRequest.getDescription());
                     return itemRepository.save(item);
                 });
     }
