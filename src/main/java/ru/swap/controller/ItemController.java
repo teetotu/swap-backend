@@ -47,17 +47,17 @@ public class ItemController {
         return status(HttpStatus.OK).body(itemService.getItem(id));
     }
 
-    @GetMapping("bySection/{section}")
+    @GetMapping("section/{section}")
     public ResponseEntity<List<ItemResponse>> getItemsBySection(@PathVariable("section") String section) {
         return status(HttpStatus.OK).body(itemService.getItemsBySection(section));
     }
 
-    @GetMapping("byUser/{username}")
+    @GetMapping("user/{username}")
     public ResponseEntity<List<ItemResponse>> getItemsByUsername(@PathVariable("username") String username) {
         return status(HttpStatus.OK).body(itemService.getItemsByUsername(username));
     }
 
-    @GetMapping("by-title/{keywords}")
+    @GetMapping("title/{keywords}")
     public ResponseEntity<List<ItemResponse>> getItemsByKeywords(@PathVariable("keywords") String keywords) {
         return status(HttpStatus.OK).body(itemService.getItemsByKeywords(keywords));
     }
