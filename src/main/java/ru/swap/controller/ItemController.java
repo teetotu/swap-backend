@@ -81,4 +81,9 @@ public class ItemController {
             return status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
         }
     }
+
+    @GetMapping("/nearme")
+    public ResponseEntity<List<ItemResponse>> getItemsInUserCity() {
+        return status(HttpStatus.OK).body(itemService.getItemsByUserCity());
+    }
 }

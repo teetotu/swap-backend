@@ -121,4 +121,12 @@ public class ItemService {
             throw new SwapApplicationException("Unauthorized access");
         }
     }
+
+    public List<ItemResponse> getItemsByUserCity() {
+        return itemRepository
+                .findByCity(authService.getCurrentUser().getCity())
+                .stream()
+                .map(itemMapper::mapToDto)
+                .collect(toList());
+    }
 }
